@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import sk.dekret.ereports.db.entities.UserAccount;
 import sk.dekret.ereports.exceptions.EReportsException;
@@ -23,11 +22,11 @@ public class AuthenticationService {
 
     public AuthResponse login(AuthRequest request) throws EReportsException {
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getUsername(), request.getPassword()));
 
-            UserAccount user = loadUserAccount((String) authentication.getPrincipal());
+            UserAccount user = loadUserAccount(request.getUsername());
             String accessToken = jwtTokenUtil.generateAccessToken(user);
 
             return new AuthResponse(accessToken, user.getRole());

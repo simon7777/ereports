@@ -10,13 +10,14 @@ import sk.dekret.ereports.db.entities.UserAccount;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 
 @Slf4j
 @Component
 public class JwtTokenUtil {
 
-    private static final long EXPIRE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+    private static final long EXPIRE_DURATION = (long) 24 * 60 * 60 * 1000; // 24 hours
 
     @Value("${app.jwt.secret}")
     private String secret;
@@ -62,7 +63,7 @@ public class JwtTokenUtil {
             return Arrays.asList(new SimpleGrantedAuthority(value));
         }
 
-        return null;
+        return Collections.emptyList();
     }
 
     private Claims parseClaims(String token) {
