@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import sk.dekret.ereports.EReportsApplication;
 import sk.dekret.ereports.JwtTokenTestGenerator;
 import sk.dekret.ereports.models.UserAccount;
-import sk.dekret.ereports.repositories.UserAccountRepository;
 import sk.dekret.ereports.services.UserService;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(locations = "classpath:application.properties")
 @SpringBootTest(classes = {EReportsApplication.class})
 @AutoConfigureMockMvc
-public class UserControllerTest implements JwtTokenTestGenerator {
+class UserControllerTest implements JwtTokenTestGenerator {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
@@ -42,8 +41,6 @@ public class UserControllerTest implements JwtTokenTestGenerator {
 
     @MockBean
     private UserService userService;
-
-    private UserAccountRepository userAccountRepository;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 

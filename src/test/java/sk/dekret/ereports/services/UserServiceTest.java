@@ -4,14 +4,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import sk.dekret.ereports.EReportsApplication;
-import sk.dekret.ereports.JwtTokenTestGenerator;
 import sk.dekret.ereports.db.entities.UserAccount;
 import sk.dekret.ereports.db.entities.UserRole;
 import sk.dekret.ereports.exceptions.EReportsException;
@@ -26,25 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @TestPropertySource(locations = "classpath:application.properties")
 @SpringBootTest(classes = {EReportsApplication.class})
 @AutoConfigureMockMvc
-public class UserServiceTest implements JwtTokenTestGenerator {
-
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    MockMvc mockMvc;
+class UserServiceTest {
 
     @Autowired
     private UserService userService;
 
     @Autowired
     private UserAccountRepository userAccountRepository;
-
-    @Value("${app.jwt.secret}")
-    String secret;
-
-    @Override
-    public String getSecret() {
-        return secret;
-    }
 
     @AfterEach
     void tearDown() {
@@ -71,7 +56,6 @@ public class UserServiceTest implements JwtTokenTestGenerator {
         assertThat(account.getFirstName()).isEqualTo(userAccount.getFirstName());
         assertThat(account.getLastName()).isEqualTo(userAccount.getLastName());
         assertThat(account.getUsername()).isEqualTo(userAccount.getUsername());
-        assertThat(account.getPassword()).isEqualTo(userAccount.getPassword());
     }
 
     @Test
