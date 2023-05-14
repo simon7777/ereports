@@ -4,7 +4,9 @@ import './index.css';
 import App from './App';
 import {BrowserRouter as Router, Redirect, Route} from 'react-router-dom';
 import LoginPage from "./components/login/LoginPage";
-import {isAuthenticated} from "./components/utils/AuthenticationUtil";
+import {isAuthenticated} from "./utils/AuthenticationUtil";
+import 'primereact/resources/themes/md-light-indigo/theme.css';
+import 'primeflex/primeflex.css'; // Import PrimeFlex CSS
 
 const PrivateRoute = ({component: Component, ...rest}) => (
     <Route

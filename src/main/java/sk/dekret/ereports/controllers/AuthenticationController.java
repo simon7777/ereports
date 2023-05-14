@@ -2,10 +2,7 @@ package sk.dekret.ereports.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sk.dekret.ereports.exceptions.EReportsException;
 import sk.dekret.ereports.models.AuthRequest;
 import sk.dekret.ereports.models.AuthResponse;
@@ -14,6 +11,7 @@ import sk.dekret.ereports.services.AuthenticationService;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"${app.client.url}"})
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;

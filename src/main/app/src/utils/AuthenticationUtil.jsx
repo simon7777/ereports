@@ -1,7 +1,5 @@
-import React from 'react';
-
 import axios from 'axios';
-import {getJwtToken, removeJwtToken, setJwtToken} from "./JwtTokenUtil";
+import {clearSessionData, getJwtToken, setJwtToken, setRole} from "./JwtTokenUtil";
 
 const existsJwtToken = () => {
     return getJwtToken() != null;
@@ -35,7 +33,7 @@ const addHttpResponseInterceptors = () => {
 }
 
 export const logout = () => {
-    removeJwtToken();
+    clearSessionData();
     redirectToLoginPage();
 }
 
@@ -50,8 +48,9 @@ export const isAuthenticated = () => {
     return false;
 }
 
-export const login = (jwtToken) => {
-    setJwtToken(jwtToken);
+export const login = (authResponse) => {
+    setJwtToken(authResponse.token);
+    setRole(authResponse.role);
 
     if (existsJwtToken()) {
         addHttpRequestInterceptor();

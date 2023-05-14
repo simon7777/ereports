@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/report")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"${app.client.url}"})
 public class ReportController {
 
     private final ReportService reportService;
