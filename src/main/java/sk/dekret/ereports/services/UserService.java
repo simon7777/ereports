@@ -34,7 +34,7 @@ public class UserService {
         UserAccount entity = UserAccountMapper.toEntity(userAccount, new UserAccount());
         entity.setPassword(encodePassword(userAccount.getPassword()));
 
-        return UserAccountMapper.toModel(entity);
+        return UserAccountMapper.toModel(this.userAccountRepository.save(entity));
     }
 
     public sk.dekret.ereports.models.UserAccount updateUser(Long id, sk.dekret.ereports.models.UserAccount model) throws EReportsException {
