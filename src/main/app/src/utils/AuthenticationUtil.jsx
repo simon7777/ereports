@@ -12,7 +12,8 @@ const redirectToLoginPage = () => {
 const addHttpRequestInterceptor = () => {
     axios.interceptors.request.use(
         (config) => {
-            return config.headers.Authorization = `Bearer ${getJwtToken()}`;
+            config.headers.Authorization = `Bearer ${getJwtToken()}`;
+            return config;
         }, (error) => {
             console.error(error);
             redirectToLoginPage();
@@ -24,12 +25,12 @@ const addHttpResponseInterceptors = () => {
     axios.interceptors.response.use(
         response => response,
         error => {
-            if (error.response.status === 401) {
+            if (error?.response?.status === 401) {
+                clearSessionData();
                 redirectToLoginPage();
             }
-            return Promise.reject(error);
         }
-    )
+    );
 }
 
 export const logout = () => {

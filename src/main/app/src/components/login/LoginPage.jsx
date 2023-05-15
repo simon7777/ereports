@@ -13,12 +13,10 @@ import {classNames} from 'primereact/utils';
 import './loginPage.css';
 import {login} from "../../services/AuthenticationService";
 import * as AuthenticationUtil from '../../utils/AuthenticationUtil'
-import {useHistory} from "react-router-dom";
 import {Toast} from 'primereact/toast';
 import {showError} from "../../utils/ToastUtil";
 
 export default function LoginPage() {
-    const history = useHistory();
     const toast = useRef(null);
 
     const formik = useFormik({
@@ -41,8 +39,8 @@ export default function LoginPage() {
         },
         onSubmit: (data) => {
             login(data).then((response) => {
-                if (AuthenticationUtil.login(response)) {
-                    history.push('/');
+                if (AuthenticationUtil.login(response.data)) {
+                    window.location.href = '/';
                     formik.resetForm();
                 }
             }, (error) => {

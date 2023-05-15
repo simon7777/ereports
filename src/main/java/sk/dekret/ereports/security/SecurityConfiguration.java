@@ -35,6 +35,9 @@ public class SecurityConfiguration {
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+        // The cors() method will add the Spring-provided CorsFilter to the application context, bypassing the authorization checks for OPTIONS requests.
+        http.cors();
+
         http.exceptionHandling()
                 .authenticationEntryPoint(
                         (request, response, ex) -> response.sendError(
