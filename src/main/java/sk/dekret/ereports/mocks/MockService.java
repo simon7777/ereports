@@ -14,14 +14,31 @@ public class MockService {
     private final UserService userService;
 
     public void mockUserAccounts() throws EReportsException {
-        UserAccount model = new UserAccount();
+        this.buildUserAccountAndSave("simon", "Simon", "Dekret", "simon", UserRole.ROLE_MANAGER);
+        this.buildUserAccountAndSave("peter", "Peter", "Petrovsky", "simon", UserRole.ROLE_USER);
+        this.buildUserAccountAndSave("filip", "Filip", "Filipovsky", "simon", UserRole.ROLE_USER);
+        this.buildUserAccountAndSave("ondrej", "Ondrej", "Ondrejovsky", "simon", UserRole.ROLE_USER);
+        this.buildUserAccountAndSave("lubica", "Lubica", "Lubicova", "simon", UserRole.ROLE_USER);
+        this.buildUserAccountAndSave("jakub", "Jakub", "Jakubisko", "simon", UserRole.ROLE_USER);
+        this.buildUserAccountAndSave("tomas", "Tomas", "Tomasovy", "simon", UserRole.ROLE_USER);
+        this.buildUserAccountAndSave("martin", "Martin", "Martinovsky", "simon", UserRole.ROLE_USER);
+        this.buildUserAccountAndSave("juraj", "Juraj", "Jurovsky", "simon", UserRole.ROLE_USER);
+        this.buildUserAccountAndSave("matej", "Matej", "Matejovsky", "simon", UserRole.ROLE_USER);
+    }
 
-        model.setRole(UserRole.ROLE_MANAGER);
-        model.setUsername("simon");
-        model.setFirstName("Simon");
-        model.setLastName("Dekret");
-        model.setPassword("simon");
+    private void buildUserAccountAndSave(String username, String firstName, String lastName, String password, UserRole role) throws EReportsException {
+        UserAccount userAccount = new UserAccount.Builder()
+                .withUsername(username)
+                .withFirstName(firstName)
+                .withLastName(lastName)
+                .withPassword(password)
+                .withRole(role)
+                .build();
 
+        saveUserAccount(userAccount);
+    }
+
+    private void saveUserAccount(UserAccount model) throws EReportsException {
         this.userService.createUser(model);
     }
 }
