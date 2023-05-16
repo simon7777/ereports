@@ -18,6 +18,8 @@ import java.util.Date;
 public class JwtTokenUtil {
 
     private static final long EXPIRE_DURATION = (long) 24 * 60 * 60 * 1000; // 24 hours
+    private static final String ROLE_CLAIM_KEY = "role";
+    private static final String USER_ACCOUNT_ID_KEY = "userAccountId";
 
     @Value("${app.jwt.secret}")
     private String secret;
@@ -26,7 +28,8 @@ public class JwtTokenUtil {
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .setIssuer("eReports")
-                .claim("role", user.getRole())
+                .claim(ROLE_CLAIM_KEY, user.getRole())
+                .claim(USER_ACCOUNT_ID_KEY, user.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_DURATION))
                 .signWith(SignatureAlgorithm.HS512, secret)
@@ -56,8 +59,18 @@ public class JwtTokenUtil {
         return parseClaims(token).getSubject();
     }
 
+    public Long getUserAccountId(String token) {
+        Object userAccountId = parseClaims(token).get(USER_ACCOUNT_ID_KEY);
+
+        if (userAccountId instanceof Long value) {
+            return value;
+        }
+
+        return null;
+    }
+
     public Collection<GrantedAuthority> getAuthorities(String token) {
-        Object role = parseClaims(token).get("role");
+        Object role = parseClaims(token).get(ROLE_CLAIM_KEY);
 
         if (role instanceof String value) {
             return Arrays.asList(new SimpleGrantedAuthority(value));
