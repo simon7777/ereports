@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import sk.dekret.ereports.EReportsApplication;
 import sk.dekret.ereports.JwtTokenTestGenerator;
+import sk.dekret.ereports.db.entities.UserRole;
 import sk.dekret.ereports.models.UserAccount;
 import sk.dekret.ereports.services.UserService;
 
@@ -81,6 +82,10 @@ class UserControllerTest implements JwtTokenTestGenerator {
     void createUserAccount() throws Exception {
         UserAccount userAccount = new UserAccount();
         userAccount.setId(1L);
+        userAccount.setUsername("Test");
+        userAccount.setFirstName("First");
+        userAccount.setLastName("Last");
+        userAccount.setRole(UserRole.ROLE_USER);
 
         when(userService.createUser(any())).thenReturn(userAccount);
 
@@ -95,6 +100,10 @@ class UserControllerTest implements JwtTokenTestGenerator {
     @Test
     void createUserAccountWithoutManagerRole() throws Exception {
         UserAccount userAccount = new UserAccount();
+        userAccount.setUsername("Test");
+        userAccount.setFirstName("First");
+        userAccount.setLastName("Last");
+        userAccount.setRole(UserRole.ROLE_USER);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/user")
                 .header(HttpHeaders.AUTHORIZATION, getJwtTokenForUser("test"))
@@ -107,6 +116,10 @@ class UserControllerTest implements JwtTokenTestGenerator {
     void updateUserAccount() throws Exception {
         UserAccount userAccount = new UserAccount();
         userAccount.setId(2L);
+        userAccount.setUsername("Test");
+        userAccount.setFirstName("First");
+        userAccount.setLastName("Last");
+        userAccount.setRole(UserRole.ROLE_USER);
 
         when(userService.updateUser(any(), any())).thenReturn(userAccount);
 
@@ -121,6 +134,10 @@ class UserControllerTest implements JwtTokenTestGenerator {
     @Test
     void updateUserAccountWithoutManagerRole() throws Exception {
         UserAccount userAccount = new UserAccount();
+        userAccount.setUsername("Test");
+        userAccount.setFirstName("First");
+        userAccount.setLastName("Last");
+        userAccount.setRole(UserRole.ROLE_USER);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/user/" + 2)
                 .header(HttpHeaders.AUTHORIZATION, getJwtTokenForUser("test"))
