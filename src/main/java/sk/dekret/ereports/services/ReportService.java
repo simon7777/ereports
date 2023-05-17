@@ -2,6 +2,7 @@ package sk.dekret.ereports.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,7 @@ import org.springframework.util.CollectionUtils;
 import sk.dekret.ereports.db.entities.UserAccount;
 import sk.dekret.ereports.mappers.ReportMapper;
 import sk.dekret.ereports.models.Report;
+import sk.dekret.ereports.models.ResponseResultList;
 import sk.dekret.ereports.repositories.ReportRepository;
 import sk.dekret.ereports.repositories.UserAccountRepository;
 import sk.dekret.ereports.utils.SecurityUtils;
@@ -37,7 +39,7 @@ public class ReportService {
     public Report updateReport(Long id, Report report) {
         sk.dekret.ereports.db.entities.Report entity = loadReportByIdOrThrowException(id);
 
-        entity = ReportMapper.toEntity(report, entity);
+        ReportMapper.toEntity(report, entity);
 
         return ReportMapper.toModel(this.reportRepository.save(entity));
     }
@@ -50,10 +52,10 @@ public class ReportService {
         return true;
     }
 
-    public List<Report> findReportsByUserId(Long userId) {
+    public List<Report> findReportsByUserId(Long userId, Integer page, Integer pageSize) {
         this.checkThatUserExistsOrThrowException(userId);
-        
-        List<sk.dekret.ereports.db.entities.Report> reportList = this.reportRepository.findAllByUserAccountId(userId);
+
+        List<sk.dekret.ereports.db.entities.Report> reportList = this.reportRepository.findAllByUserAccountId(userId, PageRequest.of(page, pageSize));
 
         List<Report> result = new ArrayList<>();
 
@@ -64,6 +66,14 @@ public class ReportService {
         }
 
         return result;
+    }
+
+    public ResponseResultList<Report> findReportsForCurrentUser(Integer page, Integer pageSize) {
+        UserAccount currentUser = loadUserAccountForCurrentlyLoggedInUser();
+
+        List<sk.dekret.ereports.db.entities.Report> reports = this.reportRepository.findAllByUserAccountId(currentUser.getId(), PageRequest.of(page, pageSize));
+
+        return new ResponseResultList<>(ReportMapper.toModels(reports));
     }
 
     private UserAccount loadUserAccountForCurrentlyLoggedInUser() {

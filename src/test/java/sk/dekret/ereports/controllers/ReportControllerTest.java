@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import sk.dekret.ereports.EReportsApplication;
 import sk.dekret.ereports.JwtTokenTestGenerator;
 import sk.dekret.ereports.models.Report;
+import sk.dekret.ereports.models.ResponseResultList;
 import sk.dekret.ereports.services.ReportService;
 
 import java.time.LocalDate;
@@ -103,12 +104,29 @@ class ReportControllerTest implements JwtTokenTestGenerator {
         report.setUserAccountId(1L);
         report.setDate(LocalDate.now().toString());
 
-        when(reportService.findReportsByUserId(any())).thenReturn(List.of(report));
+        when(reportService.findReportsByUserId(any(), any(), any())).thenReturn(List.of(report));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/report/byUser/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, getJwtTokenForUser("test")))
                 .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void findReportsForCurrentUser() throws Exception {
+        Report report = new Report();
+        report.setId(1L);
+        report.setUserAccountId(1L);
+        report.setDate(LocalDate.now().toString());
+
+        when(reportService.findReportsForCurrentUser(any(), any())).thenReturn(new ResponseResultList(List.of(report), 100L));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/report/byCurrentUser?page=0&pageSize=0")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, getJwtTokenForUser("test")))
+                .andExpect(jsonPath("$.items", hasSize(1)))
+                .andExpect(jsonPath("$.totalItems").value(100L))
                 .andExpect(status().isOk());
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.dekret.ereports.models.Report;
+import sk.dekret.ereports.models.ResponseResultList;
 import sk.dekret.ereports.services.ReportService;
 
 import java.util.List;
@@ -35,7 +36,13 @@ public class ReportController {
     }
 
     @GetMapping(path = "/byUser/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<Report>> findReportsByUser(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok(this.reportService.findReportsByUserId(id));
+    public ResponseEntity<List<Report>> findReportsByUser(@PathVariable("userId") Long id, @RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize) {
+        return ResponseEntity.ok(this.reportService.findReportsByUserId(id, page, pageSize));
+    }
+
+    @GetMapping(path = "/byCurrentUser", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ResponseResultList<Report>> findReportsByCurrentUser(@RequestParam("page") Integer page,
+                                                                               @RequestParam("pageSize") Integer pageSize) {
+        return ResponseEntity.ok(this.reportService.findReportsForCurrentUser(page, pageSize));
     }
 }

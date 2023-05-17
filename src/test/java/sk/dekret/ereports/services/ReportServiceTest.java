@@ -118,21 +118,21 @@ class ReportServiceTest {
         report2.setUserAccount(userAccount);
         this.reportRepository.save(report2);
 
-        List<Report> response = this.reportService.findReportsByUserId(userAccount.getId());
+        List<Report> response = this.reportService.findReportsByUserId(userAccount.getId(), 0, 5);
 
         assertThat(response).hasSize(2);
     }
 
     @Test
     void findReportsByNonExistentUser() {
-        assertThrows(IllegalArgumentException.class, () -> this.reportService.findReportsByUserId(100L));
+        assertThrows(IllegalArgumentException.class, () -> this.reportService.findReportsByUserId(100L, 0, 5));
     }
 
     @Test
     void findNoReportsByUser() {
         UserAccount userAccount = createUserAccount();
 
-        List<Report> response = this.reportService.findReportsByUserId(userAccount.getId());
+        List<Report> response = this.reportService.findReportsByUserId(userAccount.getId(), 0, 5);
 
         assertThat(response).isNotNull().isEmpty();
     }
