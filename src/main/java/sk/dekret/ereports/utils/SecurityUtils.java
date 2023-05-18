@@ -14,7 +14,7 @@ public class SecurityUtils {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof UserContext userContext) {
-            return Optional.of(userContext.getUserAccountId());
+            return Optional.ofNullable(userContext.getUserAccountId());
         }
 
         return Optional.empty();

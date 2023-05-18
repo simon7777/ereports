@@ -62,8 +62,8 @@ public class JwtTokenUtil {
     public Long getUserAccountId(String token) {
         Object userAccountId = parseClaims(token).get(USER_ACCOUNT_ID_KEY);
 
-        if (userAccountId instanceof Long value) {
-            return value;
+        if (userAccountId instanceof Number value) {
+            return value.longValue();
         }
 
         return null;
