@@ -3,6 +3,7 @@ package sk.dekret.ereports.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +56,7 @@ public class ReportService {
     public List<Report> findReportsByUserId(Long userId, Integer page, Integer pageSize) {
         this.checkThatUserExistsOrThrowException(userId);
 
-        List<sk.dekret.ereports.db.entities.Report> reportList = this.reportRepository.findAllByUserAccountId(userId, PageRequest.of(page, pageSize));
+        List<sk.dekret.ereports.db.entities.Report> reportList = this.reportRepository.findAllByUserAccountId(userId, PageRequest.of(page, pageSize).withSort(Sort.by("date").descending()));
 
         List<Report> result = new ArrayList<>();
 
@@ -71,7 +72,7 @@ public class ReportService {
     public ResponseResultList<Report> findReportsForCurrentUser(Integer page, Integer pageSize) {
         UserAccount currentUser = loadUserAccountForCurrentlyLoggedInUser();
 
-        List<sk.dekret.ereports.db.entities.Report> reports = this.reportRepository.findAllByUserAccountId(currentUser.getId(), PageRequest.of(page, pageSize));
+        List<sk.dekret.ereports.db.entities.Report> reports = this.reportRepository.findAllByUserAccountId(currentUser.getId(), PageRequest.of(page, pageSize).withSort(Sort.by("date").descending()));
 
         return new ResponseResultList<>(ReportMapper.toModels(reports));
     }
