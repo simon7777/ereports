@@ -104,12 +104,12 @@ class ReportControllerTest implements JwtTokenTestGenerator {
         report.setUserAccountId(1L);
         report.setDate(LocalDate.now().toString());
 
-        when(reportService.findReportsByUserId(any(), any(), any())).thenReturn(List.of(report));
+        when(reportService.findReportsByUserId(any(), any(), any())).thenReturn(new ResponseResultList(List.of(report), 100L));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/report/byUser/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/report/byUser/1?page=0&pageSize=0")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, getJwtTokenForUser("test")))
-                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$.items", hasSize(1)))
                 .andExpect(status().isOk());
     }
 

@@ -7,9 +7,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import sk.dekret.ereports.db.entities.UserAccount;
 import sk.dekret.ereports.mappers.ReportMapper;
+import sk.dekret.ereports.models.DayReports;
 import sk.dekret.ereports.models.Report;
 import sk.dekret.ereports.models.ResponseResultList;
 import sk.dekret.ereports.repositories.ReportRepository;
@@ -17,7 +17,9 @@ import sk.dekret.ereports.repositories.UserAccountRepository;
 import sk.dekret.ereports.utils.SecurityUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -53,28 +55,52 @@ public class ReportService {
         return true;
     }
 
-    public List<Report> findReportsByUserId(Long userId, Integer page, Integer pageSize) {
+    public ResponseResultList<DayReports> findReportsByUserId(Long userId, Integer page, Integer pageSize) {
         this.checkThatUserExistsOrThrowException(userId);
 
         List<sk.dekret.ereports.db.entities.Report> reportList = this.reportRepository.findAllByUserAccountId(userId, PageRequest.of(page, pageSize).withSort(Sort.by("date").descending()));
 
-        List<Report> result = new ArrayList<>();
+        List<DayReports> dayReports = transformToDayReports(ReportMapper.toModels(reportList));
 
-        if (!CollectionUtils.isEmpty(reportList)) {
-            for (sk.dekret.ereports.db.entities.Report report : reportList) {
-                result.add(ReportMapper.toModel(report));
-            }
-        }
-
-        return result;
+        return new ResponseResultList<>(dayReports);
     }
 
-    public ResponseResultList<Report> findReportsForCurrentUser(Integer page, Integer pageSize) {
+    public ResponseResultList<DayReports> findReportsForCurrentUser(Integer page, Integer pageSize) {
         UserAccount currentUser = loadUserAccountForCurrentlyLoggedInUser();
 
         List<sk.dekret.ereports.db.entities.Report> reports = this.reportRepository.findAllByUserAccountId(currentUser.getId(), PageRequest.of(page, pageSize).withSort(Sort.by("date").descending()));
 
-        return new ResponseResultList<>(ReportMapper.toModels(reports));
+        List<DayReports> dayReports = transformToDayReports(ReportMapper.toModels(reports));
+
+        return new ResponseResultList<>(dayReports);
+    }
+
+    private List<DayReports> transformToDayReports(List<Report> reports) {
+        Map<String, List<Report>> dayReportsMap = new HashMap<>();
+
+        for (Report report : reports) {
+            if (!dayReportsMap.containsKey(report.getDate())) {
+                dayReportsMap.put(report.getDate(), new ArrayList<>());
+            }
+
+            dayReportsMap.get(report.getDate()).add(report);
+        }
+
+        return this.transformMapToListOfDayReports(dayReportsMap);
+    }
+
+    private List<DayReports> transformMapToListOfDayReports(Map<String, List<Report>> dayReportsMap) {
+        List<DayReports> result = new ArrayList<>();
+
+        for (Map.Entry<String, List<Report>> entry : dayReportsMap.entrySet()) {
+            DayReports dayReports = new DayReports();
+            dayReports.setDate(entry.getKey());
+            dayReports.setReports(entry.getValue());
+
+            result.add(dayReports);
+        }
+
+        return result;
     }
 
     private UserAccount loadUserAccountForCurrentlyLoggedInUser() {

@@ -12,13 +12,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import sk.dekret.ereports.EReportsApplication;
 import sk.dekret.ereports.db.entities.UserAccount;
 import sk.dekret.ereports.db.entities.UserRole;
+import sk.dekret.ereports.models.DayReports;
 import sk.dekret.ereports.models.Report;
+import sk.dekret.ereports.models.ResponseResultList;
 import sk.dekret.ereports.repositories.ReportRepository;
 import sk.dekret.ereports.repositories.UserAccountRepository;
 import sk.dekret.ereports.security.UserContext;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -118,9 +119,9 @@ class ReportServiceTest {
         report2.setUserAccount(userAccount);
         this.reportRepository.save(report2);
 
-        List<Report> response = this.reportService.findReportsByUserId(userAccount.getId(), 0, 5);
+        ResponseResultList<DayReports> response = this.reportService.findReportsByUserId(userAccount.getId(), 0, 5);
 
-        assertThat(response).hasSize(2);
+        assertThat(response.getItems()).hasSize(1);
     }
 
     @Test
@@ -132,9 +133,9 @@ class ReportServiceTest {
     void findNoReportsByUser() {
         UserAccount userAccount = createUserAccount();
 
-        List<Report> response = this.reportService.findReportsByUserId(userAccount.getId(), 0, 5);
+        ResponseResultList<DayReports> response = this.reportService.findReportsByUserId(userAccount.getId(), 0, 5);
 
-        assertThat(response).isNotNull().isEmpty();
+        assertThat(response.getItems()).isNotNull().isEmpty();
     }
 
     UserAccount createUserAccount() {
